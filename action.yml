@@ -31,22 +31,26 @@ runs:
 
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v3
-      with:
-        # NOTE: Using a docker driver reduces build times.
-        driver: docker
 
     - name: Build
       uses: docker/build-push-action@v6
       with:
         cache-from: type=registry,ref=${{ env.IMAGE_NAME }}:cached
-        cache-to: type=inline
         load: true
         tags: ${{ env.IMAGE_NAME }}:cached
 
     - name: Push cached
       if: ${{ github.event_name == 'push' }}
-      run: docker push ${{ env.IMAGE_NAME }}:cached
-      shell: bash
+      uses: docker/build-push-action@v6
+      with:
+        cache-to: type=inline
+        push: true
+        tags: ${{ env.IMAGE_NAME }}:cached
+
+    # - name: Push cached
+    #   if: ${{ github.event_name == 'push' }}
+    #   run: docker push ${{ env.IMAGE_NAME }}:cached
+    #   shell: bash
 
     - uses: actions/checkout@v4
 
@@ -54,7 +58,7 @@ runs:
       run: docker compose --file docker-compose.yml up --abort-on-container-exit
       shell: bash
 
-    - name: Build & Push latest
+    - name: Push latest
       if: ${{ github.event_name == 'push' }}
       uses: docker/build-push-action@v6
       with:
