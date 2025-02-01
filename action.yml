@@ -13,7 +13,7 @@ runs:
   steps:
     - name: Set image name
       run: |
-        echo "IMAGE_NAME=hexletbasics/$(echo "$GITHUB_REPOSITORY" | cut -d/ -f2)" >> $GITHUB_ENV
+        echo "IMAGE_NAME=corsicanec82/$(echo "$GITHUB_REPOSITORY" | cut -d/ -f2)" >> $GITHUB_ENV
       shell: bash
 
     - name: Login to Docker Hub
