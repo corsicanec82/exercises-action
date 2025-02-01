@@ -3,5 +3,5 @@
 services:
   exercises:
     build: .
-    image: hexletbasics/exercises-action:cached
+    image: corsicanec82/exercises-action:cached
     command: make check

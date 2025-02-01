@@ -36,18 +36,17 @@ runs:
       #   driver: docker
 
       # NOTE: But you need to download the cached image separately. Otherwise, caching works every other time.
-    - name: Pull cached
-      run: docker pull ${{ env.IMAGE_NAME }}:cached || true
-      shell: bash
+    # - name: Pull cached
+    #   run: docker pull ${{ env.IMAGE_NAME }}:cached || true
+    #   shell: bash
 
     - name: Build
       uses: docker/build-push-action@v6
       with:
-        cache-from: ${{ env.IMAGE_NAME }}:cached
+        cache-from: type=registry,ref=${{ env.IMAGE_NAME }}:cached
         cache-to: type=inline
-        tags: |
-          ${{ env.IMAGE_NAME }}:cached
-          ${{ env.IMAGE_NAME }}:latest
+        load: true
+        tags: ${{ env.IMAGE_NAME }}:cached
 
     - name: Push cached
       if: ${{ github.event_name == 'push' }}
@@ -60,10 +59,12 @@ runs:
       run: docker compose --file docker-compose.yml up --abort-on-container-exit
       shell: bash
 
-    - name: Push latest
+    - name: Build & Push latest
       if: ${{ github.event_name == 'push' }}
-      run: docker push ${{ env.IMAGE_NAME }}:latest
-      shell: bash
+      uses: docker/build-push-action@v6
+      with:
+        push: true
+        tags: ${{ env.IMAGE_NAME }}:latest
 
     - uses: reviewdog/action-languagetool@v1
       with:
