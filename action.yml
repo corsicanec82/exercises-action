@@ -58,6 +58,7 @@ runs:
       if: ${{ github.event_name == 'push' }}
       uses: docker/build-push-action@v6
       with:
+        platforms: linux/amd64,linux/arm64
         push: true
         tags: ${{ env.IMAGE_NAME }}:latest
 
